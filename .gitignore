@@ -10,7 +10,6 @@
 *.out
 *.pth
 *.pt
-*.png
 wandb/
 logs/
 
