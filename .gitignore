@@ -1,0 +1,20 @@
+# data files
+*.pkl
+*.npy
+*.npz
+*.zip
+*.bvh
+/datasets
+
+# experiment outputs
+*.out
+*.pth
+*.pt
+*.png
+wandb/
+logs/
+
+# cache files
+*.pyc
+.DS_Store
+__pycache__/
