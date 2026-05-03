@@ -1,11 +1,11 @@
 import os
 from dataclasses import MISSING
 from isaaclab.envs import DirectRLEnvCfg, ManagerBasedRLEnvCfg
-from isaaclab_tasks.direct.PhysicsProject.envs.env_cfgs import BaseEnvCfg
+from isaaclab_tasks.direct.InteractionTracking.envs.env_cfgs import BaseEnvCfg
 
 from isaaclab_assets import HUMANOID_28_CFG
 from assets.robot.smpl import SMPL_CFG, SMPL_Upright_CFG
-from isaaclab_tasks.direct.PhysicsProject.assets.robot.lafan1 import LAFAN1_CFG
+from isaaclab_tasks.direct.InteractionTracking.assets.robot.lafan1 import LAFAN1_CFG
 
 from pathlib import Path
 BASE_DIR = Path(__file__).resolve().parent.parent

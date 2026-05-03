@@ -1,9 +1,9 @@
 import torch
-from isaaclab_tasks.direct.PhysicsProject.utils.func import printl
-from isaaclab_tasks.direct.PhysicsProject.envs.utils.interaction import *
-from isaaclab_tasks.direct.PhysicsProject.envs.utils.utils import *
-from isaaclab_tasks.direct.PhysicsProject.envs.utils.state import State
-from isaaclab_tasks.direct.PhysicsProject.envs.utils.mimic import *
+from isaaclab_tasks.direct.InteractionTracking.utils.func import printl
+from isaaclab_tasks.direct.InteractionTracking.envs.utils.interaction import *
+from isaaclab_tasks.direct.InteractionTracking.envs.utils.utils import *
+from isaaclab_tasks.direct.InteractionTracking.envs.utils.state import State
+from isaaclab_tasks.direct.InteractionTracking.envs.utils.mimic import *
 from isaaclab.assets import Articulation
 
 class Reward:

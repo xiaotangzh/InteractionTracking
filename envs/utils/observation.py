@@ -5,15 +5,15 @@ import numpy as np
 import math
 import random
 from typing import Union, TYPE_CHECKING
-from isaaclab_tasks.direct.PhysicsProject.utils.math import *
-from isaaclab_tasks.direct.PhysicsProject.envs.utils.reward_utils import *
-from isaaclab_tasks.direct.PhysicsProject.utils.func import *
-from isaaclab_tasks.direct.PhysicsProject.motions.utils.torch_utils import exp_map_to_quat, quat_to_tan_norm, calc_heading_quat_inv, calc_heading_quat
-from isaaclab_tasks.direct.PhysicsProject.envs.utils.state import *
-from isaaclab_tasks.direct.PhysicsProject.envs.utils.mimic import *
+from isaaclab_tasks.direct.InteractionTracking.utils.math import *
+from isaaclab_tasks.direct.InteractionTracking.envs.utils.reward_utils import *
+from isaaclab_tasks.direct.InteractionTracking.utils.func import *
+from isaaclab_tasks.direct.InteractionTracking.motions.utils.torch_utils import exp_map_to_quat, quat_to_tan_norm, calc_heading_quat_inv, calc_heading_quat
+from isaaclab_tasks.direct.InteractionTracking.envs.utils.state import *
+from isaaclab_tasks.direct.InteractionTracking.envs.utils.mimic import *
 if TYPE_CHECKING:
     from isaaclab.assets import Articulation
-    from isaaclab_tasks.direct.PhysicsProject.motions.motion_loader import MotionLoader
+    from isaaclab_tasks.direct.InteractionTracking.motions.motion_loader import MotionLoader
 
 
 def build_tracking_observation(robot: "Articulation", target_states: State, ref_body_index: int, env_ids: torch.Tensor, key_body_indexes: list | None=None) -> torch.Tensor:

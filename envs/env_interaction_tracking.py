@@ -11,24 +11,24 @@ from pathlib import Path
 import gymnasium as gym
 
 # task imports
-from isaaclab_tasks.direct.PhysicsProject.envs.base_env import BaseEnv
-from isaaclab_tasks.direct.PhysicsProject.envs.env_cfgs import *
+from isaaclab_tasks.direct.InteractionTracking.envs.base_env import BaseEnv
+from isaaclab_tasks.direct.InteractionTracking.envs.env_cfgs import *
 from isaaclab.assets import Articulation, RigidObject
 from isaaclab.sensors import ContactSensor
 
 # utils
-from isaaclab_tasks.direct.PhysicsProject.utils.func import *
-from isaaclab_tasks.direct.PhysicsProject.envs.utils.visualize import *
-from isaaclab_tasks.direct.PhysicsProject.motions.motion_loader import *
+from isaaclab_tasks.direct.InteractionTracking.utils.func import *
+from isaaclab_tasks.direct.InteractionTracking.envs.utils.visualize import *
+from isaaclab_tasks.direct.InteractionTracking.motions.motion_loader import *
 
 # environment utils
-from isaaclab_tasks.direct.PhysicsProject.envs.utils.utils import *
-from isaaclab_tasks.direct.PhysicsProject.envs.utils.reward import *
-from isaaclab_tasks.direct.PhysicsProject.envs.utils.reward_utils import *
-from isaaclab_tasks.direct.PhysicsProject.envs.utils.interaction import *
-from isaaclab_tasks.direct.PhysicsProject.envs.utils.reset import *
-from isaaclab_tasks.direct.PhysicsProject.envs.utils.done import *
-from isaaclab_tasks.direct.PhysicsProject.envs.utils.observation import *
+from isaaclab_tasks.direct.InteractionTracking.envs.utils.utils import *
+from isaaclab_tasks.direct.InteractionTracking.envs.utils.reward import *
+from isaaclab_tasks.direct.InteractionTracking.envs.utils.reward_utils import *
+from isaaclab_tasks.direct.InteractionTracking.envs.utils.interaction import *
+from isaaclab_tasks.direct.InteractionTracking.envs.utils.reset import *
+from isaaclab_tasks.direct.InteractionTracking.envs.utils.done import *
+from isaaclab_tasks.direct.InteractionTracking.envs.utils.observation import *
 
 
 class Env_Interaction_Tracking(BaseEnv):
@@ -107,11 +107,6 @@ class Env_Interaction_Tracking(BaseEnv):
             actions = torch.clip(actions, min=-self.cfg.action_clip, max=self.cfg.action_clip) 
         self.actions1, self.actions2 = torch.chunk(actions.clone(), chunks=2, dim=-1)
 
-        # temp:
-        # hand_idx = self.motion_loader_1.find_dof_indices("Hand") + self.motion_loader_1.find_dof_indices("Wrist")
-        # self.actions1[:,hand_idx] = torch.clip(self.actions1[:,hand_idx], min=-0.01, max=0.01) 
-        # self.actions2[:,hand_idx] = torch.clip(self.actions1[:,hand_idx], min=-0.01, max=0.01) 
-
         # handle random object spawning 
         if self.cfg.object_perturb:
             dt = self.step_dt
@@ -134,10 +129,6 @@ class Env_Interaction_Tracking(BaseEnv):
         self.robot1.set_joint_position_target(target1)
         target2 = self.action_offset + self.action_scale * self.actions2
         self.robot2.set_joint_position_target(target2)
-
-        # use ground truth
-        # write_ref_state(self.robot1, self.motion_loader_1, self.global_frame_indexes, self.scene.env_origins) 
-        # write_ref_state(self.robot2, self.motion_loader_2, self.global_frame_indexes, self.scene.env_origins) 
 
     # Section: Post-physics step
     def _get_dones(self) -> tuple[torch.Tensor, torch.Tensor]: # should return resets and time_out
@@ -324,4 +315,4 @@ class Env_Interaction_Tracking(BaseEnv):
     
     def _end_step(self) -> None:
         super()._end_step()
-        self.local_frame_indexes += 1 # todo: only for InterHuman
+        self.local_frame_indexes += 1 

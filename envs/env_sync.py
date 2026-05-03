@@ -7,23 +7,23 @@ import sys
 from collections import deque
 
 # task imports
-from isaaclab_tasks.direct.PhysicsProject.envs.base_env import BaseEnv
-from isaaclab_tasks.direct.PhysicsProject.envs.env_cfgs import *
+from isaaclab_tasks.direct.InteractionTracking.envs.base_env import BaseEnv
+from isaaclab_tasks.direct.InteractionTracking.envs.env_cfgs import *
 
 # utils
-from isaaclab_tasks.direct.PhysicsProject.utils.func import *
-from isaaclab_tasks.direct.PhysicsProject.envs.utils.visualize import *
-from isaaclab_tasks.direct.PhysicsProject.motions.motion_loader import MotionLoader
+from isaaclab_tasks.direct.InteractionTracking.utils.func import *
+from isaaclab_tasks.direct.InteractionTracking.envs.utils.visualize import *
+from isaaclab_tasks.direct.InteractionTracking.motions.motion_loader import MotionLoader
 
 # environment utils
-from isaaclab_tasks.direct.PhysicsProject.envs.utils.utils import *
-from isaaclab_tasks.direct.PhysicsProject.envs.utils.reward import *
-from isaaclab_tasks.direct.PhysicsProject.envs.utils.reward_utils import *
-from isaaclab_tasks.direct.PhysicsProject.envs.utils.interaction import *
-from isaaclab_tasks.direct.PhysicsProject.envs.utils.reset import *
-from isaaclab_tasks.direct.PhysicsProject.envs.utils.done import *
-from isaaclab_tasks.direct.PhysicsProject.envs.utils.tracking import Tracker
-from isaaclab_tasks.direct.PhysicsProject.envs.utils.bmp import BioMechanicalPrior
+from isaaclab_tasks.direct.InteractionTracking.envs.utils.utils import *
+from isaaclab_tasks.direct.InteractionTracking.envs.utils.reward import *
+from isaaclab_tasks.direct.InteractionTracking.envs.utils.reward_utils import *
+from isaaclab_tasks.direct.InteractionTracking.envs.utils.interaction import *
+from isaaclab_tasks.direct.InteractionTracking.envs.utils.reset import *
+from isaaclab_tasks.direct.InteractionTracking.envs.utils.done import *
+from isaaclab_tasks.direct.InteractionTracking.envs.utils.tracking import Tracker
+from isaaclab_tasks.direct.InteractionTracking.envs.utils.bmp import BioMechanicalPrior
 
 class Env_Sync(BaseEnv):
     cfg: EnvCfg_Sync

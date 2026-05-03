@@ -1,6 +1,6 @@
 import torch
-from isaaclab_tasks.direct.PhysicsProject.motions.motion_loader import MotionLoader
-from isaaclab_tasks.direct.PhysicsProject.envs.utils.state import State
+from isaaclab_tasks.direct.InteractionTracking.motions.motion_loader import MotionLoader
+from isaaclab_tasks.direct.InteractionTracking.envs.utils.state import State
 from typing import Union, TYPE_CHECKING
 if TYPE_CHECKING:
     from isaaclab.assets import Articulation

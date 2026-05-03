@@ -9,26 +9,26 @@ import sys
 import gymnasium as gym
 
 # task imports
-from isaaclab_tasks.direct.PhysicsProject.envs.base_env import BaseEnv
-from isaaclab_tasks.direct.PhysicsProject.envs.env_cfgs import *
+from isaaclab_tasks.direct.InteractionTracking.envs.base_env import BaseEnv
+from isaaclab_tasks.direct.InteractionTracking.envs.env_cfgs import *
 from isaaclab.assets import Articulation
 
 # utils
-from isaaclab_tasks.direct.PhysicsProject.utils.func import *
-from isaaclab_tasks.direct.PhysicsProject.envs.utils.visualize import *
-from isaaclab_tasks.direct.PhysicsProject.motions.motion_loader import MotionLoader
+from isaaclab_tasks.direct.InteractionTracking.utils.func import *
+from isaaclab_tasks.direct.InteractionTracking.envs.utils.visualize import *
+from isaaclab_tasks.direct.InteractionTracking.motions.motion_loader import MotionLoader
 
 # environment utils
-from isaaclab_tasks.direct.PhysicsProject.envs.utils.utils import *
-from isaaclab_tasks.direct.PhysicsProject.envs.utils.reward import *
-from isaaclab_tasks.direct.PhysicsProject.envs.utils.reward_utils import *
-from isaaclab_tasks.direct.PhysicsProject.envs.utils.interaction import *
-from isaaclab_tasks.direct.PhysicsProject.envs.utils.reset import *
-from isaaclab_tasks.direct.PhysicsProject.envs.utils.done import *
-from isaaclab_tasks.direct.PhysicsProject.envs.utils.observation import *
-from isaaclab_tasks.direct.PhysicsProject.envs.utils.amp import *
-from isaaclab_tasks.direct.PhysicsProject.envs.utils.state import State
-from isaaclab_tasks.direct.PhysicsProject.envs.utils.tracking import Tracker
+from isaaclab_tasks.direct.InteractionTracking.envs.utils.utils import *
+from isaaclab_tasks.direct.InteractionTracking.envs.utils.reward import *
+from isaaclab_tasks.direct.InteractionTracking.envs.utils.reward_utils import *
+from isaaclab_tasks.direct.InteractionTracking.envs.utils.interaction import *
+from isaaclab_tasks.direct.InteractionTracking.envs.utils.reset import *
+from isaaclab_tasks.direct.InteractionTracking.envs.utils.done import *
+from isaaclab_tasks.direct.InteractionTracking.envs.utils.observation import *
+from isaaclab_tasks.direct.InteractionTracking.envs.utils.amp import *
+from isaaclab_tasks.direct.InteractionTracking.envs.utils.state import State
+from isaaclab_tasks.direct.InteractionTracking.envs.utils.tracking import Tracker
 
 class Env_Tracking(BaseEnv):
     cfg: EnvCfg_Tracking
@@ -106,11 +106,6 @@ class Env_Tracking(BaseEnv):
         target = self.action_offset + self.action_scale * self.actions
         self.robot.set_joint_position_target(target)
 
-        # use ground truth
-        # write_ref_state(self.robot, self.motion_loader, self.global_frame_indexes, self.scene.env_origins) 
-
-        # self.extras['diff'] = Mimic.Obs.compute_diff(self.robot, self.tracker.gt)
-
     # Section: Post-physics step
     def _get_dones(self) -> tuple[torch.Tensor, torch.Tensor]: # bool
         super()._get_dones()
@@ -123,7 +118,6 @@ class Env_Tracking(BaseEnv):
         if self.cfg.early_termination:
             self.killer.terminate(
                 self.tracker.terminate_by_tracking_error(self.robot.data.body_pos_w, self.tracker.gt.body_pos_w), 
-                # Killer.terminate_by_height(self.robot.data.body_pos_w[:, 0, 2], self.cfg.terminate_root_height) # test:
             )
 
         self.tracker.count_failure(self.killer.terminated, self.tracker.motion_ids)
@@ -134,7 +128,6 @@ class Env_Tracking(BaseEnv):
 
         self.reward.compute(
             tracking=DeepMimic.Reward.compute(self.robot, self.tracker.gt, self.key_body_indexes),
-            # tracking=Mimic.Obs.compute_mse(self.robot, self.tracker.gt), # test:
             energy_penalty=Reward.Func.energy_penalty(self.robot),
         )
 

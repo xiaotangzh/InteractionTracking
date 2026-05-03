@@ -5,8 +5,8 @@ import numpy as np
 from isaaclab.markers import VisualizationMarkers
 from isaaclab.sensors import ContactSensor
 from isaaclab.assets import Articulation
-from isaaclab_tasks.direct.PhysicsProject.motions.assets.skeletons import *
-from isaaclab_tasks.direct.PhysicsProject.utils.func import *
+from isaaclab_tasks.direct.InteractionTracking.motions.assets.skeletons import *
+from isaaclab_tasks.direct.InteractionTracking.utils.func import *
 
 def reset_markers(markers: list):
     for marker in markers:

@@ -11,12 +11,12 @@ from isaaclab.sim.spawners.from_files import GroundPlaneCfg, spawn_ground_plane
 import isaaclab.sim as sim_utils
 
 # task imports
-from isaaclab_tasks.direct.PhysicsProject.envs.env_cfgs import *
+from isaaclab_tasks.direct.InteractionTracking.envs.env_cfgs import *
 
 # utils
-from isaaclab_tasks.direct.PhysicsProject.envs.utils.visualize import reset_markers
-from isaaclab_tasks.direct.PhysicsProject.envs.utils.done import Killer
-from isaaclab_tasks.direct.PhysicsProject.envs.utils.reward import Reward
+from isaaclab_tasks.direct.InteractionTracking.envs.utils.visualize import reset_markers
+from isaaclab_tasks.direct.InteractionTracking.envs.utils.done import Killer
+from isaaclab_tasks.direct.InteractionTracking.envs.utils.reward import Reward
 
 # marker
 from isaaclab.markers import VisualizationMarkersCfg, VisualizationMarkers

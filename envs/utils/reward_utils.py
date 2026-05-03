@@ -1,10 +1,10 @@
 import torch
 from torch.nn.functional import mse_loss
 import isaaclab.utils.math as math_utils
-from isaaclab_tasks.direct.PhysicsProject.utils.math import *
-from isaaclab_tasks.direct.PhysicsProject.envs.utils.utils import *
-from isaaclab_tasks.direct.PhysicsProject.utils.func import *
-from isaaclab_tasks.direct.PhysicsProject.envs.utils.state import State
+from isaaclab_tasks.direct.InteractionTracking.utils.math import *
+from isaaclab_tasks.direct.InteractionTracking.envs.utils.utils import *
+from isaaclab_tasks.direct.InteractionTracking.utils.func import *
+from isaaclab_tasks.direct.InteractionTracking.envs.utils.state import State
 from typing import TYPE_CHECKING
 if TYPE_CHECKING: 
     from isaaclab.assets import Articulation

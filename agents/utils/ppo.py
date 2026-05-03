@@ -7,7 +7,7 @@ from skrl.models.torch import Model
 from skrl.resources.schedulers.torch import KLAdaptiveLR
 from typing import Union, TYPE_CHECKING
 if TYPE_CHECKING:
-    from isaaclab_tasks.direct.PhysicsProject.agents.base_agent import BaseAgent  # avoid circular import error
+    from isaaclab_tasks.direct.InteractionTracking.agents.base_agent import BaseAgent  # avoid circular import error
 
 def compute_gae(
     rewards: torch.Tensor,

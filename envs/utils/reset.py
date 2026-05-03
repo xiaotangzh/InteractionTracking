@@ -1,11 +1,11 @@
 import torch
 from typing import Union, TYPE_CHECKING
-from isaaclab_tasks.direct.PhysicsProject.utils.math import *
-from isaaclab_tasks.direct.PhysicsProject.envs.utils.reward_utils import *
-from isaaclab_tasks.direct.PhysicsProject.utils.func import *
+from isaaclab_tasks.direct.InteractionTracking.utils.math import *
+from isaaclab_tasks.direct.InteractionTracking.envs.utils.reward_utils import *
+from isaaclab_tasks.direct.InteractionTracking.utils.func import *
 if TYPE_CHECKING:
     from isaaclab.assets import Articulation
-    from isaaclab_tasks.direct.PhysicsProject.motions.motion_loader import MotionLoader
+    from isaaclab_tasks.direct.InteractionTracking.motions.motion_loader import MotionLoader
 
 def reset_robot(
     robot: "Articulation", 

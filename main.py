@@ -52,8 +52,8 @@ experiment_cfg = {
     "write_interval": args.write_interval,
     "wandb": args.wandb,      
     "wandb_kwargs": {
-        "entity": "xiaotang-zhang",
-        "project": "IsaacLab",
+        "entity": "",
+        "project": "",
         "name": full_name
     }
 }

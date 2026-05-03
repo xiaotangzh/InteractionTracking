@@ -2,13 +2,13 @@ import torch.nn.functional as F
 import torch
 import math
 from typing import Union, TYPE_CHECKING
-from isaaclab_tasks.direct.PhysicsProject.utils.math import *
-from isaaclab_tasks.direct.PhysicsProject.envs.utils.reward_utils import *
-from isaaclab_tasks.direct.PhysicsProject.envs.utils.visualize import *
-from isaaclab_tasks.direct.PhysicsProject.utils.func import *
+from isaaclab_tasks.direct.InteractionTracking.utils.math import *
+from isaaclab_tasks.direct.InteractionTracking.envs.utils.reward_utils import *
+from isaaclab_tasks.direct.InteractionTracking.envs.utils.visualize import *
+from isaaclab_tasks.direct.InteractionTracking.utils.func import *
 if TYPE_CHECKING:
     from isaaclab.assets import Articulation
-    from isaaclab_tasks.direct.PhysicsProject.motions.motion_loader import MotionLoader
+    from isaaclab_tasks.direct.InteractionTracking.motions.motion_loader import MotionLoader
 
 class Killer:
     def __init__(self,

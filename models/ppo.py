@@ -3,7 +3,7 @@ from models.gaussian_mixin import GaussianMixin
 import torch
 from torch import nn
 from torch.nn import functional as F
-from isaaclab_tasks.direct.PhysicsProject.utils.func import printl
+from isaaclab_tasks.direct.InteractionTracking.utils.func import printl
 from utils.math import reparameterize
 from utils.func import disable_grads, enable_grads, set_grads
 from agents.utils.utils import load_from_agent_checkpoint
