@@ -29,7 +29,7 @@ Motion tracking has been an important technique for imitating human-like movemen
 - Please kindly install the IsaacLab framework from: https://github.com/isaac-sim/IsaacLab.
 - Clone this repository to `/IsaacLab/source/isaaclab_tasks/isaaclab_tasks/direct`.
 - Create virtural environment and install packages from `requirements.txt`.
-- Run the project with `bash run.sh`
+- Run the project with `bash run.bash`
 
 ### BibTex
 ```
