@@ -1,0 +1,9 @@
+gymnasium
+matplotlib
+numpy
+packaging
+pynvml
+skrl
+torch
+tqdm
+wandb

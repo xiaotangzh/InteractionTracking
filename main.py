@@ -120,7 +120,7 @@ if args.checkpoint and not getattr(agent, "skip_main_checkpoint_load", False):
     resume_path = retrieve_file_path(args.checkpoint)
     if resume_path:
         print(f"[INFO] Loading model checkpoint from: {resume_path}")
-        agent.load(resume_path, is_train=args.train, skip_modules=['optimizer', 'optimizer_disc']) 
+        agent.load(resume_path, is_train=args.train, skip_modules=['optimizer']) 
 
 if args.eval:
     agent.set_mode("eval")
