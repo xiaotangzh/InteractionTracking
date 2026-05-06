@@ -16,7 +16,7 @@
 
 <div id="top" align="center">
   
-[[Paper]](http://doi.org/10.1111/cgf.70222) [[Video]](https://youtu.be/jt3Vu2rmD38?si=j5eosbbRhq1FW-XR) [[arXiv]](https://arxiv.org/abs/2507.09704)
+[[Paper]](https://onlinelibrary.wiley.com/doi/10.1111/cgf.70336) [[Video]](https://youtu.be/37nH8QE2ycE) [[arXiv]](https://arxiv.org/abs/2604.07984)
 
 </div>
 
