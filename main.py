@@ -95,15 +95,7 @@ import experiments
 set_seed(42)
 agent_mappings = {
     "PPO": experiments.ppo,
-    "PPOX2": experiments.ppox2,
-    "AMP": experiments.amp,
-    "ADD": experiments.add,
-    "TREX": experiments.trex,
-    "TREX_CKPT": experiments.trex_ckpt,
-    "TREX_GAUSSIAN": experiments.trex_gaussian,
-    "TREX_DEMO": experiments.trex_demo,
-    "TREX_UNCERTAINTY": experiments.trex_uncertainty,
-    "TREX_VARIANCE": experiments.trex_variance,
+    "MOEX2": experiments.moex2,
 }
 agent_name = args.agent.upper()
 if agent_name in agent_mappings:

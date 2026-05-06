@@ -16,11 +16,12 @@ from skrl.memories.torch import Memory
 from skrl.models.torch import Model
 from skrl.resources.schedulers.torch import KLAdaptiveLR
 from skrl.memories.torch import RandomMemory
+
 from agents.utils.ppo import compute_gae
 
 # fmt: off
 # [start-config-dict-torch]
-PPOX2_DEFAULT_CONFIG = {
+MOEX2_DEFAULT_CONFIG = {
     "rollouts": 16,                 # number of rollouts before updating
     "learning_epochs": 8,           # number of learning epochs during each update
     "mini_batches": 2,              # number of mini batches during each learning epoch
@@ -71,7 +72,7 @@ PPOX2_DEFAULT_CONFIG = {
 # fmt: on
 
 
-class PPOX2(BaseAgent):
+class MOEX2(BaseAgent):
     def __init__(
         self,
         models: Mapping[str, Model],
@@ -103,7 +104,7 @@ class PPOX2(BaseAgent):
 
         :raises KeyError: If the models dictionary is missing a required key
         """
-        _cfg = copy.deepcopy(PPOX2_DEFAULT_CONFIG)
+        _cfg = copy.deepcopy(MOEX2_DEFAULT_CONFIG)
         _cfg.update(cfg if cfg is not None else {})
         super().__init__(
             models=models,
@@ -209,8 +210,8 @@ class PPOX2(BaseAgent):
 
         assert type(self.memory_1) == RandomMemory and type(self.memory_2) == RandomMemory
 
-        self.memory_1.create_tensor(name="states", size=self.observation_size, dtype=torch.float32)
-        self.memory_1.create_tensor(name="actions", size=self.action_size, dtype=torch.float32)
+        self.memory_1.create_tensor(name="states", size=self.observation_space, dtype=torch.float32)
+        self.memory_1.create_tensor(name="actions", size=self.action_space, dtype=torch.float32)
         self.memory_1.create_tensor(name="rewards", size=1, dtype=torch.float32)
         self.memory_1.create_tensor(name="terminated", size=1, dtype=torch.bool)
         self.memory_1.create_tensor(name="truncated", size=1, dtype=torch.bool)
@@ -218,9 +219,10 @@ class PPOX2(BaseAgent):
         self.memory_1.create_tensor(name="values", size=1, dtype=torch.float32)
         self.memory_1.create_tensor(name="returns", size=1, dtype=torch.float32)
         self.memory_1.create_tensor(name="advantages", size=1, dtype=torch.float32)
+        self.memory_1.create_tensor(name="expert_idx", size=1, dtype=torch.long)
         
-        self.memory_2.create_tensor(name="states", size=self.observation_size, dtype=torch.float32)
-        self.memory_2.create_tensor(name="actions", size=self.action_size, dtype=torch.float32)
+        self.memory_2.create_tensor(name="states", size=self.observation_space, dtype=torch.float32)
+        self.memory_2.create_tensor(name="actions", size=self.action_space, dtype=torch.float32)
         self.memory_2.create_tensor(name="rewards", size=1, dtype=torch.float32)
         self.memory_2.create_tensor(name="terminated", size=1, dtype=torch.bool)
         self.memory_2.create_tensor(name="truncated", size=1, dtype=torch.bool)
@@ -228,12 +230,18 @@ class PPOX2(BaseAgent):
         self.memory_2.create_tensor(name="values", size=1, dtype=torch.float32)
         self.memory_2.create_tensor(name="returns", size=1, dtype=torch.float32)
         self.memory_2.create_tensor(name="advantages", size=1, dtype=torch.float32)
+        self.memory_2.create_tensor(name="expert_idx", size=1, dtype=torch.long)
 
         self.rewards_1 = torch.zeros((self.memory_1.num_envs), dtype=torch.float32, device=self.device)
+        self.last_obs_1 = torch.zeros((self.memory_1.num_envs, self.observation_space), dtype=torch.float32, device=self.device)
+        self.selected_expert_idx_1 = torch.zeros((self.memory_1.num_envs), dtype=torch.long, device=self.device)
+
         self.rewards_2 = torch.zeros((self.memory_2.num_envs), dtype=torch.float32, device=self.device)
+        self.last_obs_2 = torch.zeros((self.memory_2.num_envs, self.observation_space), dtype=torch.float32, device=self.device)
+        self.selected_expert_idx_2 = torch.zeros((self.memory_2.num_envs), dtype=torch.long, device=self.device)
 
         # tensors sampled during training
-        self._tensors_names = ["states", "actions", "log_prob", "values", "returns", "advantages", "rewards"]
+        self._tensors_names = ["states", "actions", "log_prob", "values", "returns", "advantages", "rewards", "expert_idx"]
 
         # create temporary variables needed for storage and computation
         self._current_log_prob = None
@@ -257,8 +265,27 @@ class PPOX2(BaseAgent):
 
         # sample stochastic actions
         with torch.autocast(device_type=self._device_type, enabled=self._mixed_precision):
-            actions_1, log_prob_1, outputs = self.policy.act({"states": self._state_preprocessor(states_1), "timestep": timestep, "rewards": self.rewards_1}, role="policy")
-            actions_2, log_prob_2, outputs = self.policy.act({"states": self._state_preprocessor(states_2), "timestep": timestep, "rewards": self.rewards_2}, role="policy")
+            obs1 = self._state_preprocessor(states_1)
+            obs2 = self._state_preprocessor(states_2)
+            actions_1, log_prob_1, outputs = self.policy.act(
+                {"states": obs1, 
+                 "timestep": timestep, 
+                 "rewards": self.rewards_1,
+                 "last_expert_idx": self.selected_expert_idx_1,
+                 "last_obs": self.last_obs_1,
+            }, role="policy")
+            self.selected_expert_idx_1 = outputs["selected_expert_idx"].clone()
+            self.last_obs_1 = obs1.clone()
+
+            actions_2, log_prob_2, outputs = self.policy.act(
+                {"states": obs2, 
+                 "timestep": timestep, 
+                 "rewards": self.rewards_2,
+                 "last_expert_idx": self.selected_expert_idx_2,
+                 "last_obs": self.last_obs_2,
+            }, role="policy")
+            self.selected_expert_idx_2 = outputs["selected_expert_idx"].clone()
+            self.last_obs_2 = obs2.clone()
 
             actions = torch.cat([actions_1, actions_2], dim=1)
             log_prob = torch.cat([log_prob_1, log_prob_2], dim=1)
@@ -329,7 +356,7 @@ class PPOX2(BaseAgent):
 
                 values_2, _, _ = self.value.act({"states": self._state_preprocessor(states_2)}, role="value")
                 values_2 = self._value_preprocessor(values_2, inverse=True)
-            
+
             # time-limit (truncation) bootstrapping
             if self._time_limit_bootstrap:
                 infos["rewards_1"] += self._discount_factor * values_1.view(-1) * infos["truncated_1"]
@@ -399,7 +426,7 @@ class PPOX2(BaseAgent):
             values: torch.Tensor,
             next_values: torch.Tensor, 
             discount_factor: float = 0.99,
-            lambda_coefficient: float = 0.95
+            lambda_coefficient: float = 0.95,
         ) -> torch.Tensor:
             """Compute the Generalized Advantage Estimator (GAE)
 
@@ -443,11 +470,15 @@ class PPOX2(BaseAgent):
         # compute returns and advantages
         with torch.no_grad(), torch.autocast(device_type=self._device_type, enabled=self._mixed_precision):
             self.value.train(False)
+            next_states_preprocessed_1 = self._state_preprocessor(self._current_next_states_1.float())
+            next_states_preprocessed_2 = self._state_preprocessor(self._current_next_states_2.float())
             last_values_1, _, _ = self.value.act(
-                {"states": self._state_preprocessor(self._current_next_states_1.float())}, role="value"
+                {"states": next_states_preprocessed_1,
+                "expert_idx": self.policy.select_expert(next_states_preprocessed_1)}, role="value"
             )
             last_values_2, _, _ = self.value.act(
-                {"states": self._state_preprocessor(self._current_next_states_2.float())}, role="value"
+                {"states": next_states_preprocessed_2,
+                "expert_idx": self.policy.select_expert(next_states_preprocessed_2)}, role="value"
             )
             self.value.train(True)
             last_values_1 = self._value_preprocessor(last_values_1, inverse=True)
@@ -490,6 +521,7 @@ class PPOX2(BaseAgent):
         cumulative_policy_loss = 0
         cumulative_entropy_loss = 0
         cumulative_value_loss = 0
+        cumulative_adapter_usage_loss = 0  
 
         # learning epochs
         for epoch in range(self._learning_epochs):
@@ -503,7 +535,8 @@ class PPOX2(BaseAgent):
                 sampled_values,
                 sampled_returns,
                 sampled_advantages,
-                sampled_rewards
+                sampled_rewards,
+                sampled_expert_idx
             ) in sampled_batches:
                 sampled_batch_size = sampled_states.shape[0]
 
@@ -511,9 +544,13 @@ class PPOX2(BaseAgent):
 
                     sampled_states = self._state_preprocessor(sampled_states, train=not epoch)
 
+                    # note: if use multiple std, next_log_prob must be computed from expert selected when collecting samples to buffer
                     _, next_log_prob, policy_outputs = self.policy.act(
-                        {"states": sampled_states, "taken_actions": sampled_actions}, role="policy"
-                    )
+                        {"states": sampled_states, 
+                         "taken_actions": sampled_actions,
+                         "selected_experts": sampled_expert_idx,
+                         }, role="policy"
+                    ) 
 
                     # compute approximate KL divergence
                     with torch.no_grad():
@@ -549,9 +586,13 @@ class PPOX2(BaseAgent):
                         )
                     value_loss = self._value_loss_scale * F.mse_loss(sampled_returns, predicted_values)
 
+                    # extra loss
+                    adapter_usage = policy_outputs["adapter_usage"]
+                    adapter_usage_loss = (-torch.log(adapter_usage + 1e-6).mean() / 30) if adapter_usage is not None else torch.tensor(0.0, device=self.device)
+
                 # optimization step
                 self.optimizer.zero_grad()
-                self.scaler.scale(policy_loss + entropy_loss + value_loss).backward()
+                self.scaler.scale(policy_loss + entropy_loss + value_loss + adapter_usage_loss).backward()
 
                 if config.torch.is_distributed:
                     self.policy.reduce_parameters()
@@ -573,6 +614,7 @@ class PPOX2(BaseAgent):
                 # update cumulative losses
                 cumulative_policy_loss += policy_loss.item()
                 cumulative_value_loss += value_loss.item()
+                cumulative_adapter_usage_loss += adapter_usage_loss.item() 
                 if self._entropy_loss_scale:
                     cumulative_entropy_loss += entropy_loss.item()
 
@@ -591,6 +633,7 @@ class PPOX2(BaseAgent):
         # record data
         self.track_data("Loss / Policy loss", cumulative_policy_loss / (self._learning_epochs * self._mini_batches))
         self.track_data("Loss / Value loss", cumulative_value_loss / (self._learning_epochs * self._mini_batches))
+        self.track_data("Loss / Adapter Usage loss", cumulative_adapter_usage_loss / (self._learning_epochs * self._mini_batches)) 
         if self._entropy_loss_scale:
             self.track_data(
                 "Loss / Entropy loss", cumulative_entropy_loss / (self._learning_epochs * self._mini_batches)
