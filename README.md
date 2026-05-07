@@ -28,6 +28,7 @@ Motion tracking has been an important technique for imitating human-like movemen
 - This project is tested on `IsaacSim 4.5`, `IsaacLab v2.0.X` and `Ubuntu 22.04`. 
 - Please kindly install the IsaacLab framework from: https://github.com/isaac-sim/IsaacLab.
 - Clone this repository to `/IsaacLab/source/isaaclab_tasks/isaaclab_tasks/direct`.
+- [Download AMASS and InterHuman datasets](https://1drv.ms/u/c/902083787D7520A0/IQCkQv2jjWenRbsfJdl65_gJAbB69X35AcMQ2iyhA7kqFbY?e=T24MOz) to `/datasets` folder.
 - Create virtural environment and install packages from `requirements.txt`.
 - Run the project with `bash run.bash`
 
