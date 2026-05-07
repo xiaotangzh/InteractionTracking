@@ -4,7 +4,6 @@
 *.npz
 *.zip
 *.bvh
-/datasets
 
 # experiment outputs
 *.out
